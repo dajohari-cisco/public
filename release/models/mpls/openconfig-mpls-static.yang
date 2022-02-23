@@ -23,7 +23,13 @@ submodule openconfig-mpls-static {
     "Defines static LSP configuration";
 
 
-  oc-ext:openconfig-version "3.2.2";
+  oc-ext:openconfig-version "3.2.3";
+
+  revision "2022-02-23" {
+    description
+      "Add Ingress Prefix, Multipath and Interface Support";
+    reference "3.2.3";
+  }
 
   revision "2021-07-28" {
     description
@@ -124,10 +130,71 @@ submodule openconfig-mpls-static {
 
   // grouping statements
 
+  grouping static-lsp-path-common-state {
+    description
+      "common definitions for static LSP paths";
+
+    leaf next-hop {
+      type inet:ip-address;
+      description
+        "next hop IP address for the LSP path";
+    }
+
+    leaf push-label {
+      type oc-mplst:mpls-label;
+      description
+        "label value to push at the current hop for the
+        LSP path";
+    }
+
+    leaf interface-name {
+      type string;
+      description
+        "name to identify the outgoing interface for the LSP path";
+    }
+
+    // new support for per path state
+    container paths {
+      description
+        "statically configured LSP paths";
+
+      list path {
+        key "id";
+        description
+          "list of defined static LSPs";
+
+        leaf id {
+          type uint32;
+          description
+            "Path id key";
+        }
+
+        leaf next-hop {
+          type inet:ip-address;
+          description
+            "next hop IP address for the LSP path";
+        }
+
+        leaf push-label {
+          type oc-mplst:mpls-label;
+          description
+            "label value to push at the current hop for the
+            LSP path";
+        }
+        leaf interface-name {
+          type string;
+          description
+            "name to identify the outgoing interface for the LSP path";
+        }
+      }
+    }
+  }
+
   grouping static-lsp-common-config {
     description
       "common definitions for static LSPs";
 
+    // resolve only
     leaf next-hop {
       type inet:ip-address;
       description
@@ -140,11 +207,48 @@ submodule openconfig-mpls-static {
         "label value on the incoming packet";
     }
 
+    // resolve only
     leaf push-label {
       type oc-mplst:mpls-label;
       description
         "label value to push at the current hop for the
         LSP";
+    }
+
+    // new support for explicit paths
+    container paths {
+      description
+        "statically configured LSP paths";
+
+      list path {
+        key "id";
+        description
+          "list of defined static LSPs";
+
+        leaf id {
+          type uint32;
+          description
+            "Path id key";
+        }
+
+        leaf next-hop {
+          type inet:ip-address;
+          description
+            "next hop IP address for the LSP path";
+        }
+
+        leaf push-label {
+          type oc-mplst:mpls-label;
+          description
+            "label value to push at the current hop for the
+            LSP path";
+        }
+        leaf interface-name {
+          type string;
+          description
+            "name to identify the outgoing interface for the LSP path";
+        }
+      }
     }
   }
 
@@ -152,7 +256,76 @@ submodule openconfig-mpls-static {
     description
       "Configuration data for ingress LSPs";
 
-    uses static-lsp-common-config;
+    // resolve only
+    leaf next-hop {
+      type inet:ip-address;
+      description
+        "next hop IP address for the LSP";
+    }
+
+    leaf incoming-label {
+      type oc-mplst:mpls-label;
+      description
+        "label value on the incoming packet";
+    }
+
+    // resolve only
+    leaf push-label {
+      type oc-mplst:mpls-label;
+      description
+        "label value to push at the current hop for the
+        LSP";
+    }
+
+    // new support for ingress paths
+    leaf incoming-prefix {
+        type inet:ip-address;
+        description
+          "incoming IP address for the LSP";
+    }
+
+    // new support for ingress paths
+    leaf incoming-prefix-length {
+        type uint32_t;
+        description
+          "length of incoming IP address for the LSP";
+    }
+
+    // new support for explicit paths
+    container paths {
+      description
+        "statically configured LSP paths";
+
+      list path {
+        key "id";
+        description
+          "list of defined static LSPs";
+
+        leaf id {
+          type uint32;
+          description
+            "Path id key";
+        }
+
+        leaf next-hop {
+          type inet:ip-address;
+          description
+            "next hop IP address for the LSP path";
+        }
+
+        leaf push-label {
+          type oc-mplst:mpls-label;
+          description
+            "label value to push at the current hop for the
+            LSP path";
+        }
+        leaf interface-name {
+          type string;
+          description
+            "name to identify the outgoing interface for the LSP path";
+        }
+      }
+    }
   }
 
   grouping static-lsp-ingress-state {
