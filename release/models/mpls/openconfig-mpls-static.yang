@@ -23,7 +23,13 @@ submodule openconfig-mpls-static {
     "Defines static LSP configuration";
 
 
-  oc-ext:openconfig-version "3.2.3";
+  oc-ext:openconfig-version "3.2.4";
+
+  revision "2022-02-28" {
+    description
+      "Add outgoing path list";
+    reference "3.2.4";
+  }
 
   revision "2022-02-23" {
     description
@@ -130,36 +136,51 @@ submodule openconfig-mpls-static {
 
   // grouping statements
 
+  //LSP ingress fields
   grouping static-lsp-common-config {
-    description
-      "common definitions for static LSPs";
-
-    leaf next-hop {
-      type inet:ip-address;
-      description
-        "next hop IP address for the LSP";
-    }
-
     leaf incoming-label {
       type oc-mplst:mpls-label;
       description
         "label value on the incoming packet";
     }
+  }
 
-    leaf push-label {
-      type oc-mplst:mpls-label;
+  grouping static-lsp-common-outgoing-config {
+    description
+      "common definitions for static LSP outgoing paths";
+
+    list path {
+      key "id";
       description
-        "label value to push at the current hop for the
-        LSP";
-    }
+        "list of defined static LSPs";
 
-    // new for explicit
-    leaf push-interface {
-	      type string;
-	      description
-	        "interface name of outgoing traffic";
-	    }
-	  }
+      leaf id {
+        type uint32;
+        description
+          "Path id key";
+      }
+
+      leaf next-hop {
+        type inet:ip-address;
+        description
+          "next hop IP address for the LSP";
+      }
+
+      leaf push-label {
+        type oc-mplst:mpls-label;
+        description
+          "label value to push at the current hop for the
+          LSP";
+      }
+
+      // new for explicit
+      leaf push-interface {
+          type string;
+          description
+            "interface name of outgoing traffic";
+        }
+      }
+    }
   }
 
   grouping static-lsp-ingress-config {
@@ -181,6 +202,8 @@ submodule openconfig-mpls-static {
         description
           "length of incoming IP address for the LSP";
     }
+
+    uses static-lsp-common-outgoing-config;
   }
 
   grouping static-lsp-ingress-state {
@@ -243,6 +266,7 @@ submodule openconfig-mpls-static {
           "Configuration data for transit LSPs";
 
         uses static-lsp-transit-config;
+        uses static-lsp-common-outgoing-config;
       }
 
       container state {
@@ -263,6 +287,7 @@ submodule openconfig-mpls-static {
       "Configuration data for egress LSPs";
 
     uses static-lsp-common-config;
+    uses static-lsp-common-outgoing-config;
   }
 
   grouping static-lsp-egress-state {
