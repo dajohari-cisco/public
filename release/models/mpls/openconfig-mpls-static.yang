@@ -23,7 +23,13 @@ submodule openconfig-mpls-static {
     "Defines static LSP configuration";
 
 
-  oc-ext:openconfig-version "3.2.2";
+  oc-ext:openconfig-version "3.2.3";
+
+  revision "2022-02-23" {
+    description
+      "Add in prefix and out intf";
+    reference "3.2.3";
+  }
 
   revision "2021-07-28" {
     description
@@ -146,6 +152,14 @@ submodule openconfig-mpls-static {
         "label value to push at the current hop for the
         LSP";
     }
+
+    // new for explicit
+    leaf push-interface {
+	      type string;
+	      description
+	        "interface name of outgoing traffic";
+	    }
+	  }
   }
 
   grouping static-lsp-ingress-config {
@@ -153,6 +167,20 @@ submodule openconfig-mpls-static {
       "Configuration data for ingress LSPs";
 
     uses static-lsp-common-config;
+
+    // new support for ingress paths
+    leaf incoming-prefix {
+        type inet:ip-address;
+        description
+          "incoming IP address for the LSP";
+    }
+
+    // new support for ingress paths
+    leaf incoming-prefix-length {
+        type uint32_t;
+        description
+          "length of incoming IP address for the LSP";
+    }
   }
 
   grouping static-lsp-ingress-state {

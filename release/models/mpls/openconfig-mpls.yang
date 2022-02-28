@@ -71,7 +71,13 @@ module openconfig-mpls {
                              +-------+
     ";
 
-  oc-ext:openconfig-version "3.2.2";
+  oc-ext:openconfig-version "3.2.3";
+
+  revision "2021-07-28" {
+      description
+      "Add static lsp ingress interface list";
+    reference "3.2.3";
+  }
 
   revision "2021-07-28" {
     description
@@ -776,6 +782,14 @@ module openconfig-mpls {
           uses static-lsp-top;
         }
       }
+
+      container static-lsp-ingress-interfaces {
+        // entropy label support, label ranges will be added here.
+       description
+        "static lsp enabled ingress interfaces ";
+       uses mpls-interfaces-top;
+      }
+
     }
   }
 
