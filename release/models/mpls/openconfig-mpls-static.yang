@@ -203,7 +203,6 @@ submodule openconfig-mpls-static {
             type string;
             description
               "interface name of outgoing traffic";
-          }
         }
       }
     }
